@@ -67,9 +67,6 @@ ynh_script_progression --message="Recreating the dedicated system user..." --wei
 # Create the dedicated user (if not existing)
 ynh_system_user_create --username=$app
 
-# Restore sudoers file
-ynh_restore_file --origin_path="/etc/sudoers.d/${app}_ynh"
-
 #=================================================
 # RESTORE USER RIGHTS
 #=================================================
@@ -111,12 +108,8 @@ ynh_remove_extra_repo --name=$app
 ynh_script_progression --message="Restoring the systemd configuration..." --weight=1
 
 ynh_restore_file --origin_path=/etc/systemd/system/wireguard_ui.service
-ynh_restore_file --origin_path=/etc/systemd/system/wireguard_ui_conf.path
-ynh_restore_file --origin_path=/etc/systemd/system/wireguard_ui_conf.service
 
 systemctl enable --quiet wireguard_ui.service
-systemctl enable --quiet wireguard_ui_conf.path
-systemctl enable --quiet wireguard_ui_conf.service
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
@@ -127,18 +120,12 @@ yunohost service add wg-quick@wg0 --description "WireGuard VPN" --needs_exposed_
 yunohost service add wireguard_ui --description "WireGuard UI"
 
 #=================================================
-# RESTORE VARIOUS FILES
-#=================================================
-
-ynh_restore_file --origin_path=$(jq -r ".config_file_path" $final_path/db/server/global_settings.json)
-
-#=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
-ynh_systemd_action --service_name=wireguard_ui --action="start" --line_match="http server started" --log_path="systemd" --timeout=30
-sleep 5
+ynh_systemd_action --service_name=wireguard_ui --action="start" --log_path="systemd"
+sleep 3
 
 #=================================================
 # GENERIC FINALIZATION

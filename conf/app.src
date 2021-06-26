@@ -1,0 +1,7 @@
+SOURCE_URL=https://github.com/donaldzou/wireguard-dashboard/archive/refs/tags/v2.0.tar.gz
+SOURCE_SUM=4313417bf5aa66c616b6f5629ccfe28de3025e259a6d5ad34304d7fd517eda98
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=tar.gz
+SOURCE_IN_SUBDIR=true
+SOURCE_EXTRACT=true
+SOURCE_FILENAME=wireguard-dashboard.tar.gz

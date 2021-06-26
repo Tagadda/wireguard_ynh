@@ -1,13 +1,13 @@
 [Unit]
-Description=WireGuard UI
+Description=WireGuard Dashboard
 After=network.target wireguard.service
 
 [Service]
 Type=simple
-User=__APP__
-Group=__APP__
-WorkingDirectory=__FINALPATH__/
-ExecStart=__FINALPATH__/wireguard-ui --bind-address="127.0.0.1:__PORT__" --disable-login
+User=root
+Group=root
+WorkingDirectory=__FINALPATH__/src/
+ExecStart=__FINALPATH__/src/wgd.sh debug
 
 [Install]
 WantedBy=multi-user.target

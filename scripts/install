@@ -14,7 +14,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
+	read -p "debug me"
 	true
 }
 # Exit if an error occurs during the execution of the script
@@ -97,7 +97,7 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path" --source_id="$(ynh_detect_arch)"
+ynh_setup_source --dest_dir="$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -115,30 +115,22 @@ ynh_script_progression --message="Configuring system user..." --weight=1
 # Create a system user
 ynh_system_user_create --username=$app
 
-# Ensure the system user has enough permissions
-install -b -o root -g root -m 0440 ../conf/sudoers.conf /etc/sudoers.d/${app}_ynh
-ynh_replace_string "__USER__" "${app}" /etc/sudoers.d/${app}_ynh
-
 #=================================================
 # SPECIFIC SETUP
 #=================================================
 # CONFIGURING WIREGUARD
 #=================================================
 
-# Create db directory for securing it later
-mkdir -p $final_path/db/server
-
-# Add interface configuration file for the Web UI
-cp ../conf/interfaces.json $final_path/db/server/interfaces.json
-ynh_replace_string --match_string="__PORT_WG__" --replace_string="$port_wg" --target_file="$final_path/db/server/interfaces.json"
-
 # Create WireGuard configuration directory
 mkdir -p /etc/wireguard
-
 # Add interface configuration file for WireGuard
-cp ../conf/wg0.conf /etc/wireguard/wg0.conf
-ynh_replace_string --match_string="__PORT_WG__" --replace_string="$port_wg" --target_file="/etc/wireguard/wg0.conf"
-ynh_replace_string --match_string="__PRIVATE_KEY__" --replace_string="$(wg genkey)" --target_file="/etc/wireguard/wg0.conf"
+private_key=$(wg genkey)
+peer_key=$(wg genkey)
+peer_psk=$(wg genpsk)
+ynh_add_config --template="../conf/wg0.conf" --destination="/etc/wireguard/wg0.conf"
+
+# Add ini configuration file
+ynh_add_config --template="../conf/wg-dashboard.ini" --destination="$final_path/src/wg-dashboard.ini"
 
 #=================================================
 # SETUP SYSTEMD
@@ -148,13 +140,6 @@ ynh_script_progression --message="Configuring a systemd service..." --weight=1
 # Create a dedicated systemd config for the web UI
 ynh_add_systemd_config --service=wireguard_ui --template=wireguard_ui.service
 
-# Create a dedicated systemd config for monitoring WireGuard's configuration
-cp ../conf/wireguard_ui_conf.path /etc/systemd/system/wireguard_ui_conf.path
-systemctl enable --quiet wireguard_ui_conf.path
-
-# Create a dedicated systemd config for restarting WireGuard when its configuration changes
-ynh_add_systemd_config --service=wireguard_ui_conf --template=wireguard_ui_conf.service
-
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
@@ -162,9 +147,8 @@ ynh_add_systemd_config --service=wireguard_ui_conf --template=wireguard_ui_conf.
 #=================================================
 
 # Set permissions to app files
-chown -R root: $final_path
-chown -R $app: $final_path/db
-chmod -R 750 $final_path/db
+chown -R $app: $final_path
+chmod -R 750 $final_path
 
 chown -R $app:$app /etc/wireguard
 
@@ -173,7 +157,6 @@ chown -R $app:$app /etc/wireguard
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add wg-quick@wg0 --description "WireGuard VPN" --needs_exposed_ports $port_wg --test_status "wg show | grep wg0"
 yunohost service add wireguard_ui --description "WireGuard UI"
 
 #=================================================
@@ -182,7 +165,8 @@ yunohost service add wireguard_ui --description "WireGuard UI"
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 # Start a systemd service
-ynh_systemd_action --service_name=wireguard_ui --action="start" --line_match="http server started" --log_path="systemd" --timeout=30
+ynh_systemd_action --service_name=wireguard_ui --action="start" --log_path="systemd"
+sleep 3
 
 #=================================================
 # SETUP SSOWAT
