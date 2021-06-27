@@ -13,14 +13,13 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Réseaux Privés Virtuels (VPN) via WireGuard, avec une web UI pour faciliter sa configuration
 
-**Version incluse :** 0.2.7~ynh6
+**Version incluse :** 2.0~ynh1
 
 
 
 ## Captures d'écran
 
 ![](./doc/screenshots/screenshot.png)
-![](./doc/screenshots/screenshot.png:Zone.Identifier)
 
 ## Avertissements / informations importantes
 
@@ -28,8 +27,7 @@ Réseaux Privés Virtuels (VPN) via WireGuard, avec une web UI pour faciliter sa
   * Vous devriez redémarrer votre serveur pour que WireGuard puisse se lancer.
 * Cette application inclut WireGuard et une interface web non-officielle pour le configurer.
   * Évitez de modifier les fichiers de configuration via la ligne de commande.
-* Utiliser le panneau de permissions de YunoHost pour autoriser des utilisateurs à accéder à WireGuard UI.
-* Une seule interface réseau, *wg0*, peut actuellement être gérée par cette app.
+* Utilisez le panneau de permissions de YunoHost pour autoriser des utilisateurs à accéder à WireGuard UI.
 
 ### Partagez votre connexion Internet via WireGuard
 
@@ -44,18 +42,7 @@ net.ipv6.conf.all.forwarding = 1
 sudo sysctl -p
 ```
 
-Ajoutez les commandes suivantes dans le menu `WireGuard Server`. Remplacez `eth0` avec l'interface connectée à Internet :
-
-#### Post Up Script
-```
-iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-```
-
-#### Post Down Script
-```
-iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
-```
-
+Vous pourriez avoir besoin de remplacer `eth0` par l'interface connectée à Internet dans les scripts Post Up et Post Down de `/etc/wireguard/wg0.conf`
 
 ## Documentations et ressources
 
