@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Réseaux Privés Virtuels (VPN) via WireGuard, avec une web UI pour faciliter sa configuration
 
-**Version incluse :** 2.0~ynh1
+**Version incluse :** 2.1~ynh1
 
 
 
