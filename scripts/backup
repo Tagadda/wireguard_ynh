@@ -55,7 +55,6 @@ ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 
 ynh_backup --src_path=/etc/systemd/system/wireguard_ui.service
-ynh_backup --src_path="/etc/sudoers.d/${app}_ynh"
 
 #=================================================
 # END OF SCRIPT
