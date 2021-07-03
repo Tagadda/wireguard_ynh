@@ -4,7 +4,7 @@
 # COMMON VARIABLES
 #=================================================
 
-version="2.0"
+version="2.1"
 
 if grep "Raspberry Pi" /proc/device-tree/model; then
     pkg_headers="raspberrypi-kernel-headers"

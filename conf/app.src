@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/donaldzou/wireguard-dashboard/archive/refs/tags/v2.0.tar.gz
-SOURCE_SUM=4313417bf5aa66c616b6f5629ccfe28de3025e259a6d5ad34304d7fd517eda98
+SOURCE_URL=https://github.com/donaldzou/wireguard-dashboard/archive/refs/tags/v2.1.tar.gz
+SOURCE_SUM=2ca303d9675048613cdbd579383ead2166f6898021ecad2db673ef3ab5b2a266
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true

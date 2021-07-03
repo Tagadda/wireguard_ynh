@@ -65,4 +65,4 @@ prepare_source --template="../conf/wg-dashboard.ini.default" --destination="../c
 sed -i "s#    \"version\": \".*#    \"version\": \"${version}\~ynh1\",#" ../manifest.json
 
 git add .
-git commit ../manifest.json ../conf/app.src ../conf/wg-dashboard.ini -m "Upgrade to v$version"
+git commit _common.sh ../manifest.json ../conf/app.src ../conf/wg-dashboard.ini -m "Upgrade to v$version"
